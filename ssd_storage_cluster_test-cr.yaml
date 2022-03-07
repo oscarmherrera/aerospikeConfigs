@@ -2,7 +2,7 @@ apiVersion: asdb.aerospike.com/v1beta1
 kind: AerospikeCluster
 metadata:
   name: aerocluster
-  namespace: aerospike
+  namespace: testing
 
 spec:
   size: 2
