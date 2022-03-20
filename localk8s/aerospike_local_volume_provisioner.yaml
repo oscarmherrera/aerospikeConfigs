@@ -1,0 +1,141 @@
+#How to make this work
+---
+# Source: provisioner/templates/provisioner.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: local-provisioner-config
+  namespace: aerospike
+data:
+  # We ned to have nodeLabelsForPV so that we could actually match
+  # the PV to the PVC per node without this there is no way to know
+  # what PV is on what node and you will always get PVC bind toleration errors
+  nodeLabelsForPV: "[kubernetes.io/hostname,storage.type]"
+  useNodeNameOnly: "true"
+  # Yes we can have many different types of storage classes managed by
+  # the local volume provisioner
+  # this configuration allows me to have one LVP manage both storage classes
+  storageClassMap: |
+  # Make sure to prepare each of the discovery directories and the actually
+  # devices as defined here
+  # https://lapee79.github.io/en/article/use-a-local-disk-by-local-volume-static-provisioner-in-kubernetes/
+  # you may want to have raw devices and filesystem devices as I have here
+  # For aerospike you need an actual workdir mounted or the AKO will not deploy
+  # the statefulset and pods succesfully.
+  # we probably want to do the filesystem one better with ceph, glusterfs or rook
+    local-ssd:
+       hostDir: /mnt/disks
+       mountDir: /mnt/disks
+       blockCleanerCommand:
+         - "/scripts/shred.sh"
+         - "0"
+       volumeMode: Block
+    standard:
+       hostDir: /mnt/kube
+       mountDir: /mnt/kube
+       blockCleanerCommand:
+         - "/scripts/shred.sh"
+         - "0"
+       volumeMode: Filesystem
+       fsType: ext4
+       namePattern: "*"
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: local-volume-provisioner
+  namespace: aerospike
+  labels:
+    app: local-volume-provisioner
+spec:
+  selector:
+    matchLabels:
+      app: local-volume-provisioner
+  template:
+    metadata:
+      labels:
+        app: local-volume-provisioner
+      annotations:
+        storage-volume: local-ssd
+    spec:
+      serviceAccountName: local-storage-admin
+      containers:
+        - image: "quay.io/external_storage/local-volume-provisioner:v2.3.3"
+          imagePullPolicy: "Always"
+          name: provisioner
+          securityContext:
+            privileged: true
+          env:
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          # Make sure to configure both mount points or else
+          # the LVP won't be able to access the not configured mount point
+          # and the pods will never start
+          volumeMounts:
+            - mountPath: /etc/provisioner/config
+              name: provisioner-config
+              readOnly: true
+            - mountPath: /mnt/disks
+              name: local-ssd
+              mountPropagation: "HostToContainer"
+            - mountPath: /mnt/kube
+              name: standard
+              mountPropagation: "HostToContainer"
+      # Make sure to define both volumes here as well or you won't be able to use
+      # the storage
+      volumes:
+        - name: provisioner-config
+          configMap:
+            name: local-provisioner-config
+        - name: local-ssd
+          hostPath:
+            path: /mnt/disks
+        - name: standard
+          hostPath:
+            path: /mnt/kube
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: local-storage-admin
+  namespace: aerospike
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: local-storage-provisioner-pv-binding
+  namespace: aerospike
+subjects:
+- kind: ServiceAccount
+  name: local-storage-admin
+  namespace: aerospike
+roleRef:
+  kind: ClusterRole
+  name: system:persistent-volume-provisioner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: local-storage-provisioner-node-clusterrole
+  namespace: aerospike
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: local-storage-provisioner-node-binding
+  namespace: aerospike
+subjects:
+- kind: ServiceAccount
+  name: local-storage-admin
+  namespace: aerospike
+roleRef:
+  kind: ClusterRole
+  name: local-storage-provisioner-node-clusterrole
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,97 @@
+apiVersion: asdb.aerospike.com/v1beta1
+kind: AerospikeCluster
+metadata:
+  name: aerocluster
+  namespace: aerospike
+
+spec:
+  # Add fields here
+  size: 2
+  image: aerospike/aerospike-server-enterprise:5.7.0.8
+
+  # When defining storage both the data volume defined here as nsvol1 and the
+  # workdir volume.  AKO requires a workdir volume or the pods won't mount.
+  # mount path for the data volume should match to the LVP mounts
+  # or at least I like to keep it that way.
+  storage:
+    filesystemVolumePolicy:
+      cascadeDelete: true
+      initMethod: deleteFiles
+    blockVolumePolicy:
+      cascadeDelete: true
+    volumes:
+      - name: workdir
+        aerospike:
+          path: /opt/aerospike
+        source:
+          persistentVolume:
+            storageClass: standard
+            volumeMode: Filesystem
+            size: 1Gi
+      - name: nsvol1
+        aerospike:
+          path: /mnt/disks
+        source:
+          persistentVolume:
+            storageClass: local-ssd
+            volumeMode: Block
+            size: 10Gi
+
+      - name: aerospike-config-secret
+        source:
+          secret:
+            secretName: aerospike-secret
+        aerospike:
+          path: /etc/aerospike/secret
+
+#  podSpec:
+#    multiPodPerHost: true
+  podSpec:
+    # Because you are using local volumes you probably don't want multiple hosts
+    multiPodPerHost: false
+    # We need to expose the AS cluster to the outside world through the host
+    # network
+    hostNetwork: true
+    # CRITICAL
+    # You must define a podAntiAffinity rule or the pod will have no idea where to
+    # put itself and the K8s secheduler won't schedule the pod.
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: "app"
+                operator: In
+                values:
+                  - aerospike-cluster
+          topologyKey: kubernetes.io/hostname
+
+  aerospikeAccessControl:
+    users:
+      - name: admin
+        secretName: auth-secret
+        roles:
+          - sys-admin
+          - user-admin
+
+  aerospikeConfig:
+    service:
+      feature-key-file: /etc/aerospike/secret/features.conf
+    security: {}
+    network:
+      service:
+        port: 3000
+      fabric:
+        port: 3001
+      heartbeat:
+        port: 3002
+    namespaces:
+      - name: test
+        # memory-size: 3000000000
+        memory-size: 300000000
+        replication-factor: 2
+        storage-engine:
+          type: device
+          devices:
+            - /mnt/disks
+            #- /dev/nvme0n1

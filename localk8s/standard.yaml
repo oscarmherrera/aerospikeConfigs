@@ -1,0 +1,11 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: "WaitForFirstConsumer"
+# This is needed for the workdir for AKO we should change this to one of the
+# cloud native storage providers like CEPH, GlusterFS 
+# Setting the volumeBindingMode to WaitForFirstConsumer is criticate
+# if you set it to Immediate it will try to bind before the pod affinity rules
+# are fully exercised
