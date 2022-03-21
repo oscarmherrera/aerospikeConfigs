@@ -1,5 +1,3 @@
-#How to make this work
----
 # Source: provisioner/templates/provisioner.yaml
 apiVersion: v1
 kind: ConfigMap
