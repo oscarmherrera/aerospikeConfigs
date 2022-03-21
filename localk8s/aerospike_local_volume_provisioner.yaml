@@ -5,7 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: local-provisioner-config
-  namespace: aerospike
+  # namespace: aerospike
 data:
   # We ned to have nodeLabelsForPV so that we could actually match
   # the PV to the PVC per node without this there is no way to know
@@ -44,7 +44,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: local-volume-provisioner
-  namespace: aerospike
+  # namespace: aerospike
   labels:
     app: local-volume-provisioner
 spec:
@@ -100,17 +100,17 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: local-storage-admin
-  namespace: aerospike
+  # namespace: aerospike
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: local-storage-provisioner-pv-binding
-  namespace: aerospike
+  # namespace: aerospike
 subjects:
 - kind: ServiceAccount
   name: local-storage-admin
-  namespace: aerospike
+  # namespace: aerospike
 roleRef:
   kind: ClusterRole
   name: system:persistent-volume-provisioner
@@ -120,7 +120,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: local-storage-provisioner-node-clusterrole
-  namespace: aerospike
+  # namespace: aerospike
 rules:
 - apiGroups: [""]
   resources: ["nodes"]
@@ -130,11 +130,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: local-storage-provisioner-node-binding
-  namespace: aerospike
+  # namespace: aerospike
 subjects:
 - kind: ServiceAccount
   name: local-storage-admin
-  namespace: aerospike
+  # namespace: aerospike
 roleRef:
   kind: ClusterRole
   name: local-storage-provisioner-node-clusterrole
