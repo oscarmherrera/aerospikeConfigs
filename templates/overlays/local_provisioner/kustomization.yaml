@@ -1,0 +1,5 @@
+bases:
+- ../local_provisioner
+namespace: aerospike-dev
+resources:
+- aerospike_local_volume_provisioner.yaml
