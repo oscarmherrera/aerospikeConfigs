@@ -7,4 +7,5 @@ spec:
   channel: alpha
   name: aerospike-kubernetes-operator
   source: operatorhubio-catalog
-  sourceNamespace: operators
+  sourceNamespace: olm
+  installPlanApproval: Automatic
