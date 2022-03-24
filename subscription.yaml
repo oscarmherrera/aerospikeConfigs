@@ -1,5 +1,5 @@
 apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
+kind: subscription
 metadata:
   name: aerospike-kubernetes-operator
   namespace: operators
