@@ -8,15 +8,3 @@ spec:
   name: aerospike-kubernetes-operator
   source: operatorhubio-catalog
   sourceNamespace: operators
-
----
-apiVersion: operators.coreos.com/v1alpha1
-kind: subscription
-metadata:
-  name: aerospike-kubernetes-operator
-  namespace: operators
-spec:
-  channel: alpha
-  name: aerospike-kubernetes-operator
-  source: operatorhubio-catalog
-  sourceNamespace: olm  
