@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -x
 # Usage: kubesudo namespace:serviceaccount get pod
 
 USAGE="Usage: $0 [namespace:]user kubectl-commands..."
