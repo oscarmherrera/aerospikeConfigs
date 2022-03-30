@@ -6,6 +6,9 @@ metadata:
   labels:
     app: eks-local-disk-provisioner
 spec:
+  selector:
+    matchLabels:
+      app: eks-local-disk-provisioner
   template:
     metadata:
       labels:
