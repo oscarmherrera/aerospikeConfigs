@@ -20,7 +20,7 @@ spec:
           path: /opt/aerospike
         source:
           persistentVolume:
-            storageClass: ssd
+            storageClass: local-ssd
             volumeMode: Filesystem
             size: 5Gi
       - name: ns
@@ -28,7 +28,7 @@ spec:
           path: /test/dev/xvdf
         source:
           persistentVolume:
-            storageClass: ssd
+            storageClass: local-ssd
             volumeMode: Block
             size: 75Gi
       - name: aerospike-config-secret
