@@ -30,7 +30,7 @@ data:
          - "/scripts/shred.sh"
          - "0"
        volumeMode: Block
-    standard:
+    standard-ebs:
        hostDir: /mnt/kube
        mountDir: /mnt/kube
        blockCleanerCommand:
@@ -81,7 +81,7 @@ spec:
               name: local-ssd
               mountPropagation: "HostToContainer"
             - mountPath: /mnt/kube
-              name: standard
+              name: standard-ebs
               mountPropagation: "HostToContainer"
       # Make sure to define both volumes here as well or you won't be able to use
       # the storage
@@ -92,7 +92,7 @@ spec:
         - name: local-ssd
           hostPath:
             path: /mnt/disks
-        - name: standard
+        - name: standard-ebs
           hostPath:
             path: /mnt/kube
 ---
@@ -102,16 +102,16 @@ metadata:
   name: local-storage-admin
 #  namespace: aerospike
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: local-storage-provisioner-node-clusterrole
-#  namespace: aerospike
-rules:
-- apiGroups: [""]
-  resources: ["nodes"]
-  verbs: ["get"]
-# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRole
+# metadata:
+#   name: local-storage-provisioner-node-clusterrole
+#   namespace: aerospike
+# rules:
+# - apiGroups: [""]
+#   resources: ["nodes"]
+#   verbs: ["get"]
+# # ---
 # apiVersion: rbac.authorization.k8s.io/v1
 # kind: ClusterRoleBinding
 # metadata:
