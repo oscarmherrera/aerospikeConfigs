@@ -2,8 +2,7 @@ apiVersion: asdb.aerospike.com/v1beta1
 kind: AerospikeCluster
 metadata:
   name: aerocluster
-  namespace: development
-
+  namespace: aerospike
 spec:
   size: 2
   image: aerospike/aerospike-server-enterprise:5.7.0.8
@@ -20,7 +19,7 @@ spec:
           path: /opt/aerospike
         source:
           persistentVolume:
-            storageClass: local-ssd
+            storageClass: local-storage
             volumeMode: Filesystem
             size: 5Gi
       - name: ns
@@ -28,7 +27,7 @@ spec:
           path: /test/dev/xvdf
         source:
           persistentVolume:
-            storageClass: local-ssd
+            storageClass: local-storage
             volumeMode: Block
             size: 50Gi
       - name: aerospike-config-secret
