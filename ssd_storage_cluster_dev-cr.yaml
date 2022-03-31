@@ -30,7 +30,7 @@ spec:
           persistentVolume:
             storageClass: local-ssd
             volumeMode: Block
-            size: 75Gi
+            size: 50Gi
       - name: aerospike-config-secret
         source:
           secret:
