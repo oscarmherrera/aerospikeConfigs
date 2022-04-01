@@ -51,6 +51,10 @@ data:
     local-storage:
        hostDir: /pv-disks
        mountDir: /pv-disks
+       blockCleanerCommand:
+         - "/scripts/shred.sh"
+         - "0"
+       volumeMode: Block
 ---
 apiVersion: apps/v1
 kind: DaemonSet
