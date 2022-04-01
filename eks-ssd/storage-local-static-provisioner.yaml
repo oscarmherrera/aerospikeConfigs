@@ -46,6 +46,7 @@ metadata:
   namespace: kube-system
 data:
   setPVOwnerRef: "true"
+  nodeLabelsForPV: "[kubernetes.io/hostname,storage.type]"
   useNodeNameOnly: "true"
   storageClassMap: |
     local-storage:
