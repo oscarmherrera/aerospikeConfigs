@@ -19,7 +19,7 @@ spec:
           path: /opt/aerospike
         source:
           persistentVolume:
-            storageClass: local-storage
+            storageClass: standard-ebs
             volumeMode: Filesystem
             size: 5Gi
       - name: ns
