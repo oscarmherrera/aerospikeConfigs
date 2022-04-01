@@ -48,7 +48,6 @@ data:
   setPVOwnerRef: "true"
   nodeLabelsForPV: "[kubernetes.io/hostname,storage.type]"
   useNodeNameOnly: "true"
-  labelsForPV: "[app=aerospike-cluster]"
   storageClassMap: |
     local-storage:
        hostDir: /pv-disks
