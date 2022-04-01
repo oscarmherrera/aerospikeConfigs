@@ -4,13 +4,18 @@ metadata:
   name: aerocluster
   namespace: development
 spec:
+  # Add fields here
   size: 2
   image: aerospike/aerospike-server-enterprise:5.7.0.8
 
+  # When defining storage both the data volume defined here as nsvol1 and the
+  # workdir volume.  AKO requires a workdir volume or the pods won't mount.
+  # mount path for the data volume should match to the LVP mounts
+  # or at least I like to keep it that way.
   storage:
     filesystemVolumePolicy:
-      initMethod: deleteFiles
       cascadeDelete: true
+      initMethod: deleteFiles
     blockVolumePolicy:
       cascadeDelete: true
     volumes:
@@ -21,23 +26,44 @@ spec:
           persistentVolume:
             storageClass: standard-ebs
             volumeMode: Filesystem
-            size: 5Gi
-      - name: ns
+            size: 10Gi
+      - name: nsvol1
         aerospike:
-          path: /test/dev/xvdf
+          path: /pv-disks
         source:
           persistentVolume:
-            storageClass: local-storage
+            storageClass: local-ssd
             volumeMode: Block
-            size: 65Gi
+            size: 50Gi
+
       - name: aerospike-config-secret
         source:
           secret:
             secretName: aerospike-secret
         aerospike:
           path: /etc/aerospike/secret
+
+#  podSpec:
+#    multiPodPerHost: true
   podSpec:
-    multiPodPerHost: true
+    # Because you are using local volumes you probably don't want multiple hosts
+    multiPodPerHost: false
+    # We need to expose the AS cluster to the outside world through the host
+    # network
+    hostNetwork: true
+    # CRITICAL
+    # You must define a podAntiAffinity rule or the pod will have no idea where to
+    # put itself and the K8s secheduler won't schedule the pod.
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: "app"
+                operator: In
+                values:
+                  - aerospike-cluster
+          topologyKey: kubernetes.io/hostname
 
   aerospikeAccessControl:
     users:
@@ -60,9 +86,11 @@ spec:
         port: 3002
     namespaces:
       - name: test
-        memory-size: 3000000000
+        # memory-size: 3000000000
+        memory-size: 300000000
         replication-factor: 2
         storage-engine:
           type: device
           devices:
-            - /test/dev/xvdf
+            - /pv-disks
+            #- /dev/nvme0n1
