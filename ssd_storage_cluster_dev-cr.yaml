@@ -24,7 +24,7 @@ spec:
           path: /opt/aerospike
         source:
           persistentVolume:
-            storageClass: standard-ebs
+            storageClass: gp2
             volumeMode: Filesystem
             size: 10Gi
       - name: nsvol1
