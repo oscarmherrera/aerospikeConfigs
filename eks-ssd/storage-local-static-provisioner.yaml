@@ -48,6 +48,7 @@ data:
   setPVOwnerRef: "true"
   nodeLabelsForPV: "[kubernetes.io/hostname,storage.type]"
   useNodeNameOnly: "true"
+  labelsForPV: "[kubernetes.io/hostname,storage.type]"
   storageClassMap: |
     local-storage:
        hostDir: /pv-disks
