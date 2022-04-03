@@ -24,7 +24,7 @@ spec:
         imagePullPolicy: Always
         env:
           - name: PARTED_SCRIPT
-            value: ""mklabel gpt mkpart logical 0% 80% mkpart logical 20% 100%""
+            value: "mklabel gpt mkpart logical 0% 80% mkpart logical 20% 100%"
           - name: RAW_DEVICE
             value: "1"
           - name: BASE_DIR

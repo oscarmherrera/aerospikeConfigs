@@ -39,6 +39,22 @@ metadata:
   name: local-storage-admin
   namespace: kube-system
 ---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-block
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-fs
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: "WaitForFirstConsumer"
+reclaimPolicy: Delete
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -123,19 +139,3 @@ spec:
         - name: local-storage
           hostPath:
             path: /pv-disks
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: local-block
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
-reclaimPolicy: Delete
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: local-fs
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: "WaitForFirstConsumer"
-reclaimPolicy: Delete
