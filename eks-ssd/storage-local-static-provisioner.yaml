@@ -49,12 +49,18 @@ data:
   nodeLabelsForPV: "[kubernetes.io/hostname,storage.type]"
   useNodeNameOnly: "true"
   storageClassMap: |
-    local-storage:
+    local-block:
        hostDir: /pv-disks
        mountDir: /pv-disks
        blockCleanerCommand:
          - "/scripts/blkdiscard.sh"
        volumeMode: Block
+    locals-fs:
+       hostDir: /nvme
+       mountDir: /nvme
+       volumeMode: Filesystem
+       fsType: ext4
+       namePattern: "*"
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -121,7 +127,15 @@ spec:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: local-storage
+  name: local-block
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-fs
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: "WaitForFirstConsumer"
 reclaimPolicy: Delete

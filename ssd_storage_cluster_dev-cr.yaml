@@ -24,7 +24,7 @@ spec:
           path: /opt/aerospike
         source:
           persistentVolume:
-            storageClass: gp2
+            storageClass: local-fs
             volumeMode: Filesystem
             size: 10Gi
       - name: nsvol1
@@ -32,7 +32,7 @@ spec:
           path: /pv-disks
         source:
           persistentVolume:
-            storageClass: local-storage
+            storageClass: local-block
             volumeMode: Block
             size: 50Gi
 
