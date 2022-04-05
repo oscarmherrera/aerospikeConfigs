@@ -32,7 +32,7 @@ spec:
           path: /pv-disks
         source:
           persistentVolume:
-            storageClass: local-block
+            storageClass: ebs-sc
             volumeMode: Block
             size: 50Gi
 
