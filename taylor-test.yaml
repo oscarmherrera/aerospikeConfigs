@@ -8,7 +8,7 @@ spec:
   size: 2
   image: aerospike/aerospike-server-enterprise:5.7.0.8
   podSpec:
-    multiPodPerHost: true
+    multiPodPerHost: false
 
   validationPolicy:
     skipWorkDirValidate: true
