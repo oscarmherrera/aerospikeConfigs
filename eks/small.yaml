@@ -10,11 +10,11 @@ kubernetesNetworkConfig:
   ipFamily: IPv4
 iam:
   withOIDC: true
-availabilityZones: ["<<ZONES>>"]
+availabilityZones: [<<ZONES>>]
 managedNodeGroups:
   - name: linux-nodes
     amiFamily: AmazonLinux2
-    availabilityZones: ["<<ZONES>>"]
+    availabilityZones: [<<ZONES>>]
     instanceType: m5d.large
     minSize: 1
     maxSize: 4
