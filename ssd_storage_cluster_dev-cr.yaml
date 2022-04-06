@@ -24,9 +24,9 @@ spec:
           path: /opt/aerospike
         source:
           persistentVolume:
-            storageClass: ebs-sc
+            storageClass: ebs-sc-fs
             volumeMode: Filesystem
-            size: 10Gi
+            size: 50Gi
       - name: nsvol1
         aerospike:
           path: /pv-disks
@@ -34,7 +34,7 @@ spec:
           persistentVolume:
             storageClass: ebs-sc
             volumeMode: Block
-            size: 50Gi
+            size: 65Gi
 
       - name: aerospike-config-secret
         source:
@@ -50,7 +50,7 @@ spec:
     multiPodPerHost: false
     # We need to expose the AS cluster to the outside world through the host
     # network
-    hostNetwork: true
+    hostNetwork: false
     # CRITICAL
     # You must define a podAntiAffinity rule or the pod will have no idea where to
     # put itself and the K8s secheduler won't schedule the pod.
@@ -93,3 +93,10 @@ spec:
           devices:
             - /pv-disks
             #- /dev/nvme0n1
+
+  seedsFinderServices:
+    loadBalancer:
+      externalTrafficPolicy: Local
+      annotations:
+        app: "aerospike"
+        role: "seed_finder_services"
