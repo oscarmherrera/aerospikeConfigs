@@ -29,5 +29,4 @@ managedNodeGroups:
         ebs: true
         cloudwatch: true
     preBootstrapCommands:
-      - sudo yum install nvme-cli
-      - sudo yum install parted
+      - sudo yum -y install nvme-cli parted
