@@ -1,0 +1,30 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: <CLUSTERNAME>
+  region: <REGION>
+  version: "1.21"
+kubernetesNetworkConfig:
+  ipFamily: IPv4
+iam:
+  withOIDC: true
+availabilityZones: [<<ZONES>>]
+managedNodeGroups:
+  - name: linux-nodes
+    amiFamily: AmazonLinux2
+    availabilityZones: [<<ZONES>>]
+    instanceType: m5d.xlarge
+    minSize: 1
+    maxSize: 6
+    desiredCapacity: 3
+    ssh:
+      allow: true
+      publicKeyName: eks-cluster-global
+    labels:
+      aws.amazon.com/eks-local-ssd: "true"
+    iam:
+      withAddonPolicies:
+        ebs: true
+        cloudwatch: true
+    preBootstrapCommands:
+      - sudo yum -y install nvme-cli parted
