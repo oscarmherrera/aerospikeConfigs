@@ -15,7 +15,7 @@ managedNodeGroups:
   - name: linux-nodes
     amiFamily: AmazonLinux2
     availabilityZones: [<<ZONES>>]
-    instanceType: m5d.large
+    instanceType: m5dn.large
     minSize: 1
     maxSize: 4
     desiredCapacity: 3
