@@ -16,7 +16,7 @@ managedNodeGroups:
     amiFamily: AmazonLinux2
     availabilityZones: [<<ZONES>>]
     instanceType: m5dn.large
-    minSize: 1
+    minSize: 2
     maxSize: 4
     desiredCapacity: 3
     ssh:
