@@ -75,7 +75,7 @@ data:
        hostDir: /nvme
        mountDir: /nvme
        volumeMode: Filesystem
-       fsType: ext4
+       fsType: xfs
        namePattern: "*"
 ---
 apiVersion: apps/v1
