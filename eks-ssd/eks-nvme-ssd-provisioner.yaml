@@ -20,12 +20,13 @@ spec:
       priorityClassName: system-node-critical
       containers:
       - name: eks-nvme-ssd-provisioner
-        image: oscarmherrera/eks-nvme-ssd-provisioner:latest
+        # image: oscarmherrera/eks-nvme-ssd-provisioner:latest
+        image: fmilletari/eks-nvme-ssd-provisioner:1.0.2
         imagePullPolicy: Always
         env:
           - name: PARTED_SCRIPT
-            value: ""
-            # value: "mklabel gpt mkpart logical 0% 80% mkpart logical 20% 100%"
+            # value: ""
+            value: "mklabel gpt mkpart logical 0% 80% mkpart logical 80% 100%"
           - name: RAW_DEVICE
             value: "1"
           - name: BASE_DIR

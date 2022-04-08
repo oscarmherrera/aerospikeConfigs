@@ -65,17 +65,17 @@ data:
   nodeLabelsForPV: "[kubernetes.io/hostname,storage.type]"
   useNodeNameOnly: "true"
   storageClassMap: |
-    local-block:
-       hostDir: /pv-disks
-       mountDir: /pv-disks
-       blockCleanerCommand:
-         - "/scripts/blkdiscard.sh"
-       volumeMode: Block
+    # local-block:
+    #    hostDir: /pv-disks
+    #    mountDir: /pv-disks
+    #    blockCleanerCommand:
+    #      - "/scripts/blkdiscard.sh"
+    #    volumeMode: Block
     locals-fs:
-       hostDir: /nvme
-       mountDir: /nvme
+       hostDir: /pv-disks/fast-disk
+       mountDir: /pv-disks/fast-disk
        volumeMode: Filesystem
-       fsType: xfs
+       fsType: ext4
        namePattern: "*"
 ---
 apiVersion: apps/v1
@@ -126,7 +126,7 @@ spec:
               readOnly: true
             - mountPath: /dev
               name: provisioner-dev
-            - mountPath: /pv-disks
+            - mountPath: /pv-disks/fast-disk
               name: local-storage
               mountPropagation: "HostToContainer"
       volumes:
@@ -138,4 +138,4 @@ spec:
             path: /dev
         - name: local-storage
           hostPath:
-            path: /pv-disks
+            path: /pv-disks/fast-disk
