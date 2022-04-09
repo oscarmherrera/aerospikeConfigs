@@ -24,17 +24,17 @@ spec:
           path: /opt/aerospike
         source:
           persistentVolume:
-            storageClass: ebs-sc-fs
+            storageClass: local-path
             volumeMode: Filesystem
-            size: 50Gi
+            size: 5Gi
       - name: nsvol1
         aerospike:
-          path: /pv-disks
+          path: /data
         source:
           persistentVolume:
-            storageClass: ebs-sc
-            volumeMode: Block
-            size: 65Gi
+            storageClass: local-path
+            volumeMode: Filesystem
+            size: 60Gi
 
       - name: aerospike-config-secret
         source:
@@ -86,13 +86,16 @@ spec:
         port: 3002
     namespaces:
       - name: test
-        memory-size: 3000000000
+        memory-size: 5000000000
         replication-factor: 2
         storage-engine:
           type: device
-          devices:
-            - /pv-disks
-            #- /dev/nvme0n1
+          files:
+            - /data/small.dat
+          filesize: 60000000000
+          data-in-memory: true
+            # - /mnt/disks/data
+            # #- /dev/nvme0n1
 
   seedsFinderServices:
     loadBalancer:
