@@ -16,7 +16,22 @@ data:
   setup: |-
     #!/bin/sh
     set -eu
+
+    export
+    echo "------"
+    echo "VOL_DIR: $VOL_DIR"
+    echo "VOL_MODE: $VOL_MODE"
+    echo "VOL_SIZE_BYTES: $VOL_SIZE_BYTES"
+
     mkdir -m 0777 -p "$VOL_DIR"
+    str1="$VOL_MODE"
+    str2="Filesystem"
+    if [[ $str1 = $str2 ]]
+    then
+     mkdir $VOL_DIR/data
+     touch $VOL_DIR/data/small.dat
+    fi
+
   teardown: |-
     #!/bin/sh
     set -eu
