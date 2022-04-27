@@ -43,14 +43,13 @@ spec:
         aerospike:
           path: /etc/aerospike/secret
 
-#  podSpec:
-#    multiPodPerHost: true
+
   podSpec:
     # Because you are using local volumes you probably don't want multiple hosts
     multiPodPerHost: false
     # We need to expose the AS cluster to the outside world through the host
     # network
-    hostNetwork: false
+    hostNetwork: true
     # CRITICAL
     # You must define a podAntiAffinity rule or the pod will have no idea where to
     # put itself and the K8s secheduler won't schedule the pod.
@@ -64,6 +63,14 @@ spec:
                 values:
                   - aerospike-cluster
           topologyKey: kubernetes.io/hostname
+    aerospikeContainer:
+      resources:
+        requests:
+          memory: 5Gi
+          cpu: 1000m
+        limits:
+          memory: 10Gi
+          cpu: 5000m
 
   aerospikeAccessControl:
     users:
@@ -72,6 +79,8 @@ spec:
         roles:
           - sys-admin
           - user-admin
+          - write
+          - read
 
   aerospikeConfig:
     service:
@@ -99,7 +108,7 @@ spec:
 
   seedsFinderServices:
     loadBalancer:
-      externalTrafficPolicy: Local
+      externalTrafficPolicy: Cluster
       annotations:
         app: "aerospike"
         role: "seed_finder_services"
