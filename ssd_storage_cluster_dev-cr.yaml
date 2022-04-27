@@ -108,7 +108,7 @@ spec:
 
   seedsFinderServices:
     loadBalancer:
-      externalTrafficPolicy: Cluster
+      externalTrafficPolicy: Local
       annotations:
         app: "aerospike"
         role: "seed_finder_services"
